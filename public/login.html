@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8349865179411810" crossorigin="anonymous"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/phi-jp/meltline@v0.1.15/meltline.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@100..900&display=swap" rel="stylesheet">
+
+  <script src="./login.js"></script>
+  <title>110mh.net</title>
+  <style>
+    .min-h200 {
+      min-height: 200px;
+    }
+    textarea::placeholder {
+      color: #999; /* 任意の色 */
+      opacity: 1;  /* ブラウザによって薄くなるのを防ぐ */
+    }
+    .bg-off-white-gray {
+      background-color: #F8F7F5;
+    }
+    ul, ol {
+        margin-top: 0.5rem;
+        margin-left: 1.5rem;
+      }
+
+  .noto-sans-jp-400 {
+    font-family: "Noto Sans JP", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 400;
+    font-style: normal;
+  }
+  .active-button {
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px 15px;
+  }
+
+  </style>
+</head>
+<body>
+  <div class="relative bg-off-white-gray s-px10 noto-sans-jp-400 h100vh f fh">
+    <div class="container-1024 py20">
+      <div class="f fm fc mb2">
+        <button class="w128 text-center p8 border rounded-top-10 mr12" id="change-signin-button">新規登録</button>
+        <button class="w128 text-center p8 border rounded-top-10" id="change-login-button">ログイン</button>
+      </div>
+
+      <form id="form" class="border p40 bg-white rounded-10 mb36">
+        <div class="mb36">
+          <div class="mb24">
+            <div class="bold mb6">ユーザー名</div>
+            <input type="text" required class="input rounded-4 w256" id="name-input">
+          </div>
+          <div>
+            <div class="bold mb6">パスワード</div>
+            <input type="password" required class="input rounded-4 w256" id="password-input">
+          </div>
+        </div>
+        <div class="f fm fc">
+          <button class="button primary w-full" id="submit-button"></button>
+        </div>
+      </form>
+      <div class="f fc">
+        <a href="/" class="inline-block bg-orange text-black rounded-full w256 text-center p8">TOPへ戻る</a>
+      </div>
+    </div>
+  </div>
+
+</body>
+</html>   

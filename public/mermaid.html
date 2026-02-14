@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8349865179411810" crossorigin="anonymous"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/phi-jp/meltline@v0.1.15/meltline.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@100..900&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  
+  <script type="module" src="./mermaid.js"></script>
+
+  <title>110mh.net</title>
+  <style>
+    .min-h200 {
+      min-height: 200px;
+    }
+    textarea::placeholder {
+      color: #999; /* 任意の色 */
+      opacity: 1;  /* ブラウザによって薄くなるのを防ぐ */
+    }
+    .bg-off-white-gray {
+      background-color: #F8F7F5;
+    }
+    ul, ol {
+        margin-top: 0.5rem;
+        margin-left: 1.5rem;
+      }
+
+  .noto-sans-jp-400 {
+    font-family: "Noto Sans JP", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 400;
+    font-style: normal;
+  }
+  .active-button {
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px 15px;
+  }
+  .min-height-500 {
+    min-height: 500px;
+  }
+  .min-height-300 {
+    min-height: 300px;
+  }
+  .rounded-full {
+    border-radius: 9999px !important;
+  }
+  .mt200 {
+    margin-top: 200px !important;
+  }
+  .no-scroll {
+    height: 100vh;
+    overflow: hidden;
+  }
+  .bg-editor {
+    background-color: #1E1E1E;
+  }
+  </style>
+</head>
+<body>
+  <div class="relative bg-off-white-gray s-px10 noto-sans-jp-400">
+    <div class="container-1024 py20">
+      <h1 class="text-left bold mb20">Mermaidマークダウン</h1>
+      <form id="form">
+        <h3 class="mb4 bold">UMLタイプ</h3>
+        <div class="relative w200 mb20">
+          <select id="uml-type-select" class="input border w-full rounded-4 p6 bw2 cursor-pointer mb12"></select>
+          <div class="absolute t7 r10 pointer-none">▼</div>
+        </div>
+        <h3 class="text-left mb4">ChatGPTに指示を出してください</h3>
+          <div class="relative">
+            <textarea id="prompt-input-area" class="min-height-300 w-full p10 pt36 border border-gray-300 rounded border bw4 rounded-10" required></textarea>
+            <div id="default-prompt" class="absolute t10 l12"></div>
+          </div>
+          <div class="f fr">
+            <button id="send-button" class="button w128 primary rounded-full">送信</button>
+          </div>
+        <h3 class="text-left mb4">Mermaidエディター</h3>
+        <div class="relative">
+          <textarea id="editor" class="min-height-500 w-full p10 pb40 border border-gray-300 rounded border bw4 rounded-10 bg-editor text-white" placeholder="Mermaidエディター"></textarea>
+          <button type="button" id="clear-button" class="absolute b15 r15 button w128 rounded-full bg-red text-white">クリア</button>
+        </div>
+        <div class="f fr">
+          <button id="output-button" class="button w128 primary rounded-full" type="button">表示</button>
+        </div>
+        <div id="result-space" class="hide">
+          <h3 class="text-left mb4">Mermaid出力</h3>
+          <div id="preview" class="border rounded-10 mb4"></div>
+          <div class="f fr">
+            <button type="button" id="download-button" class="button w128 primary rounded-full">ダウンロード</button>
+          </div>
+        </div>
+
+
+
+
+      </form>
+    </div>
+    <div id="loading-modal" class="absolute trbl0 bg-black opacity-50 hide">
+      <div class="absolute trbl0 f fc mt200 text-white fs20">通信中...</div>
+    </div>
+  </div>
+</body>
+</html>
