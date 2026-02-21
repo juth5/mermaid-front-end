@@ -1,10 +1,10 @@
 import app from './app.js';
 import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
 
-// 初期設定
 mermaid.initialize({ 
     startOnLoad: false,
-    theme: 'default' 
+    theme: 'default',
+    securityLevel: 'loose', // これを追加
 });
 
 document.addEventListener('DOMContentLoaded', async () => {
