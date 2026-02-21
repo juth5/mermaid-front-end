@@ -38,8 +38,10 @@ app.post("/api/chatGpt", async (req, res) => {
     const { id } = req.body;
     const token = req.headers.authorization; // "Bearer xxx"
     const text_with_context = question;
+    const response = await fetch('http://http://54.238.90.135/:8080/api/chatgpt', {
+
     // const response = await fetch('http://localhost:8080/api/chatgpt', {
-    const response = await fetch('http://49.212.137.241:8080/api/chatgpt', {
+    // const response = await fetch('http://49.212.137.241:8080/api/chatgpt', {
       method: "POST",
       headers: {
         "Authorization": token,
@@ -64,9 +66,10 @@ app.post("/api/chatGpt/mermaid", async (req, res) => {
     const { model } = req.body;
     const { uml_type } = req.body;
     const token = req.headers.authorization; // "Bearer xxx"
+    const response = await fetch('http://54.238.90.135:8080/api/chatgpt/mermaid', {
 
     // const response = await fetch('http://localhost:8080/api/chatgpt/mermaid', {
-    const response = await fetch('http://49.212.137.241:8080/api/chatgpt/mermaid', {
+    // const response = await fetch('http://49.212.137.241:8080/api/chatgpt/mermaid', {
       method: "POST",
       headers: {
         "Authorization": token,
@@ -88,8 +91,10 @@ app.post("/api/chatGpt/mermaid", async (req, res) => {
 app.post("/api/singIn", async (req, res) => {
   try {
     const { username, password } = req.body;
-    const response = await fetch('http://49.212.137.241:8080/api/account/create', {
-    //const response = await fetch('http://localhost:8080/api/account/create', {
+      const response = await fetch('http://54.238.90.135:8080/api/account/create', {
+
+    // const response = await fetch('http://49.212.137.241:8080/api/account/create', {
+    // const response = await fetch('http://localhost:8080/api/account/create', {
 
       method: "POST",
       headers: {
@@ -110,8 +115,9 @@ app.post("/api/singIn", async (req, res) => {
 app.post("/api/logIn", async (req, res) => {
   try {
     const { username, password } = req.body;
-    const response = await fetch('http://49.212.137.241:8080/api/account/logIn', {
-    //const response = await fetch('http://localhost:8080/api/account/logIn', {
+    // const response = await fetch('http://49.212.137.241:8080/api/account/logIn', {
+    // const response = await fetch('http://localhost:8080/api/account/logIn', {
+    const response = await fetch('http://54.238.90.135:8080/api/account/logIn', {
 
       
       method: "POST",
@@ -134,8 +140,9 @@ app.get("/api/secure-data", async (req, res) => {
   const token = req.headers.authorization; // "Bearer xxx"
 
   try {
-    const response = await fetch('http://49.212.137.241:8080/api/account/list', {
-    //const response = await fetch('http://localhost:8080/api/account/list', {
+    // const response = await fetch('http://49.212.137.241:8080/api/account/list', {
+    // const response = await fetch('http://localhost:8080/api/account/list', {
+    const response = await fetch('http://54.238.90.135:8080/api/account/list', {
 
       method: "GET",
       headers: {
@@ -155,8 +162,10 @@ app.get("/api/secure-data", async (req, res) => {
 app.get("/api/me", async (req, res) => {
   const token = req.headers.authorization;
   try {
-    const response = await fetch('http://49.212.137.241:8080/api/account/me', {
-    //const response = await fetch('http://localhost:8080/api/account/me', {
+    // const response = await fetch('http://49.212.137.241:8080/api/account/me', {
+    // const response = await fetch('http://localhost:8080/api/account/me', {
+    const response = await fetch('http://54.238.90.135:8080/api/account/me', {
+
       method: "GET",
       headers: {
         "Authorization": token,
@@ -185,8 +194,9 @@ app.get("/api/me", async (req, res) => {
 app.get("/api/my/qa", async (req, res) => {
   const token = req.headers.authorization;
   try {
-    const response = await fetch('http://49.212.137.241:8080/api/my/qa', {
-    //const response = await fetch('http://localhost:8080/api/my/qa', {
+    // const response = await fetch('http://49.212.137.241:8080/api/my/qa', {
+    // const response = await fetch('http://localhost:8080/api/my/qa', {
+    const response = await fetch('http://54.238.90.135:8080/api/my/qa', {
 
       method: "GET",
       headers: {
