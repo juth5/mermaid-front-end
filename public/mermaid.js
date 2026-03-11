@@ -31,11 +31,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     const promptCopyButton = document.getElementById('prompt-copy-button');
     const copyCodeButton = document.getElementById('copy-code-button');
     const umtTypeDescriptionElement = document.getElementById('uml-type-description');
-    
-    
-    
-
-
 
     outputButton.addEventListener('click', async () => {
         let result = await renderChart();
@@ -44,8 +39,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
 
     downloadButton.addEventListener('click', async () => {
-        //await downloadMermaidImage();
-
         downloadViaKroki(editor.value);
     });
 
@@ -59,9 +52,6 @@ document.addEventListener('DOMContentLoaded', async () => {
       renderChart();
       showResultSpace();
     });
-
-    // sendButton.addEventListener('click', async () => {
-    // });
 
     clearButton.addEventListener('click', async () => {
       editor.value = "";
@@ -114,24 +104,13 @@ document.addEventListener('DOMContentLoaded', async () => {
         umtTypeDescriptionElement.textContent = descriptionText;
       }
     };
-    
+
     umlTypeSelectElement.addEventListener('change', (e) => {
       console.log(e.target.value, "選択されたオプションのデータセット");
       changeUmlTypeImage(e.target.value);
       setFormatPrompt(e.target.value);
       setUmlTypeDescription(e.target.value);
-      //defaultPromptElement.textContent = `既定指示文：${e.target.selectedOptions[0].dataset.mainPrompt}`;
     });
-
-    // closeBtn.addEventListener('click', () => {
-    //   imageDialog.src = "";
-    // });
-
-    // umlTypeImage.addEventListener('click', (e) => {
-    //   console.log(e.target.src, "クリックされた画像のsrc");
-    //   previewImage.src = e.target.src;
-    //   imageDialog.showModal();
-    // });
 
     createUmlTypeOptions(umlTypeSelectElement);
     // 描画用の関数（修正版）
@@ -165,11 +144,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     let showResultSpace = () => {
       resultSpaceElement.classList.remove('hide');
     };
-
-
-    
-
-
 });
 
 let getChatGptMermaidResponse = async () => {
