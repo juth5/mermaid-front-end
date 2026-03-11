@@ -1,11 +1,15 @@
 import app from './app.js';
 import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
 
+
+
 mermaid.initialize({ 
     startOnLoad: false,
     theme: 'default',
     securityLevel: 'loose', // これを追加
 });
+
+
 
 document.addEventListener('DOMContentLoaded', async () => {
 
@@ -19,6 +23,14 @@ document.addEventListener('DOMContentLoaded', async () => {
     const clearButton = document.getElementById('clear-button');
     const umlTypeSelectElement = document.getElementById('uml-type-select');
     const defaultPromptElement = document.getElementById('default-prompt');
+    const umlTypeImage = document.getElementById('uml-type-image');
+    const imageDialog = document.getElementById('image-dialog');
+    const closeBtn = document.getElementById('closeBtn');
+    const previewImage = document.getElementById('preview-image');
+    const formatPromptElement = document.getElementById('format-prompt');
+    const promptCopyButton = document.getElementById('prompt-copy-button');
+    const copyCodeButton = document.getElementById('copy-code-button');
+    const umtTypeDescriptionElement = document.getElementById('uml-type-description');
 
     outputButton.addEventListener('click', async () => {
         let result = await renderChart();
@@ -27,7 +39,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
 
     downloadButton.addEventListener('click', async () => {
-        await downloadMermaidImage();
+        downloadViaKroki(editor.value);
     });
 
     formElement.addEventListener('submit', async(e) => {
@@ -41,31 +53,90 @@ document.addEventListener('DOMContentLoaded', async () => {
       showResultSpace();
     });
 
-    sendButton.addEventListener('click', async () => {
-    });
-
     clearButton.addEventListener('click', async () => {
       editor.value = "";
       preview.innerHTML = "";
+      editor.focus();
     });
 
+    let changeUmlTypeImage = (umlTypeValue) => {
+      umlTypeImage.src = `/assets/image/${umlTypeValue}.png`;
+    };
+
+    promptCopyButton.addEventListener('click', () => {
+      const textToCopy = formatPromptElement.textContent;
+      navigator.clipboard.writeText(textToCopy)
+        .then(() => {
+          alert("プロンプトがコピーされました！");
+        })
+        .catch(err => {
+          console.error("コピーに失敗しました:", err);
+          alert("コピーに失敗しました。ブラウザの設定を確認してください。");
+        });
+    });
+
+    copyCodeButton.addEventListener('click', () => {
+      const codeToCopy = editor.value;
+      navigator.clipboard.writeText(codeToCopy)
+        .then(() => {
+          alert("コードがコピーされました！");
+        })
+        .catch(err => {
+          console.error("コピーに失敗しました:", err);
+          alert("コピーに失敗しました。ブラウザの設定を確認してください。");
+        });
+    });
+
+
+
+    let setFormatPrompt = (umlTypeValue) => {
+      formatPromptElement.textContent = "";
+      let main_prompt = app.data.umlTypes.find(type => type.value === umlTypeValue)?.main_prompt || "";
+      let promptText = `mermaidで${main_prompt}`;      
+      formatPromptElement.textContent = promptText;
+    };
+    
+    let setUmlTypeDescription = (umlTypeValue) => {
+      umtTypeDescriptionElement.textContent = "";
+      let descriptionList = app.data.umlTypes.find(type => type.value === umlTypeValue)?.description || [];
+      if (descriptionList.length > 0) {
+        let descriptionText = "（例：" + descriptionList.join("、") + "）";
+        umtTypeDescriptionElement.textContent = descriptionText;
+      }
+    };
+
     umlTypeSelectElement.addEventListener('change', (e) => {
-      defaultPromptElement.textContent = `既定指示文：${e.target.selectedOptions[0].dataset.mainPrompt}`;
+      console.log(e.target.value, "選択されたオプションのデータセット");
+      changeUmlTypeImage(e.target.value);
+      setFormatPrompt(e.target.value);
+      setUmlTypeDescription(e.target.value);
     });
 
     createUmlTypeOptions(umlTypeSelectElement);
-
-    // 描画用の関数
+    // 描画用の関数（修正版）
     const renderChart = async () => {
         const code = editor.value;
+        if (!code) return false;
+
         try {
-            // render(ID, ソースコード)
-            const { svg } = await mermaid.render('mermaid-svg', code);
+            // IDを一意にする（Date.now()などを使って重複を避けるのが安全です）
+            const id = 'mermaid-svg-' + Date.now();
+            
+            // v10のrenderは第2引数にコードを渡します
+            const { svg, bindFunctions } = await mermaid.render(id, code);
+            
             preview.innerHTML = svg;
+
+            // ズームなどのインタラクションがある図の場合、これを呼ぶ必要があります
+            if (bindFunctions) {
+                bindFunctions(preview);
+            }
+            
             return true;
         } catch (error) {
-            // 文法エラー時はコンソールに出す（または画面にエラー表示）
             console.error("Syntax Error:", error);
+            // エラー時、ユーザーに通知するためにpreviewをクリアしたりメッセージを出したりする
+            preview.innerHTML = `<p style="color:red;">文法エラーが発生しています</p>`;
             return false;
         }
     };
@@ -161,7 +232,6 @@ let downloadMermaidImage = async () => {
     // キャンバスサイズをパディング分大きくする
     canvas.width = (baseWidth + padding * 2) * scale;
     canvas.height = (baseHeight + padding * 2) * scale;
-    
     const ctx = canvas.getContext("2d");
 
     // 3. SVGをクローンし、サイズを調整
@@ -169,6 +239,13 @@ let downloadMermaidImage = async () => {
     clonedSvg.setAttribute("width", baseWidth);
     clonedSvg.setAttribute("height", baseHeight);
     clonedSvg.style.backgroundColor = "white";
+
+    // clonedSvg を作成した後にこれを追加
+    clonedSvg.style.fontFamily = "Arial, sans-serif";
+    const textElements = clonedSvg.querySelectorAll('text');
+    textElements.forEach(text => {
+        text.style.fontFamily = "Arial, sans-serif";
+    });
 
     const svgData = new XMLSerializer().serializeToString(clonedSvg);
     const img = new Image();
@@ -226,5 +303,43 @@ let createUmlTypeOptions = (selectElement) => {
   });
     const event = new Event('change', { bubbles: true });
     selectElement.dispatchEvent(event);
+};
+
+let downloadViaKroki = async (mermaidCode) => {
+    try {
+        // 1. 文字列をUTF-8のバイト配列に変換
+        const bytes = new TextEncoder().encode(mermaidCode);
+
+        // 2. CompressionStreamを使ってzlib(deflate)圧縮
+        const cs = new CompressionStream('deflate');
+        const writer = cs.writable.getWriter();
+        writer.write(bytes);
+        writer.close();
+
+        // 3. 圧縮されたデータを取得
+        const compressedBuffer = await new Response(cs.readable).arrayBuffer();
+        
+        // 4. Base64エンコード（URL安全な形式に変換）
+        const base64 = btoa(String.fromCharCode(...new Uint8Array(compressedBuffer)))
+            .replace(/\+/g, '-')
+            .replace(/\//g, '_');
+
+        // 5. Krokiのエンドポイント
+        const apiUrl = `https://kroki.io/mermaid/png/${base64}`;
+        
+        // 動作確認用にログ出力
+        console.log("Kroki URL:", apiUrl);
+
+        // 別タブで開く、またはダウンロード処理
+        const link = document.createElement("a");
+        link.href = apiUrl;
+        link.download = `mermaid_kroki_${Date.now()}.png`;
+        link.target = "_blank"; // 安全策として別タブで開く
+        link.click();
+
+    } catch (error) {
+        console.error("Kroki連携エラー:", error);
+        alert("画像生成に失敗しました。ブラウザがCompressionStreamに対応していない可能性があります。");
+    }
 };
 
