@@ -31,11 +31,18 @@ document.addEventListener('DOMContentLoaded', async () => {
     const promptCopyButton = document.getElementById('prompt-copy-button');
     const copyCodeButton = document.getElementById('copy-code-button');
     const umtTypeDescriptionElement = document.getElementById('uml-type-description');
+    const umlTypeSubTitleElement = document.getElementById('uml-type-sub-title');
+    const scaleButton = document.getElementById('scale-button');
 
     outputButton.addEventListener('click', async () => {
         let result = await renderChart();
         if (!result) return ;
         showResultSpace();
+        // ページの最下部までスクロール
+        window.scrollTo({
+          top: document.body.scrollHeight,
+          behavior: 'smooth' // じわっと動かしたい場合は 'smooth'、一瞬で飛ばすなら 'auto'
+        });
     });
 
     downloadButton.addEventListener('click', async () => {
@@ -97,12 +104,22 @@ document.addEventListener('DOMContentLoaded', async () => {
     };
     
     let setUmlTypeDescription = (umlTypeValue) => {
-      umtTypeDescriptionElement.textContent = "";
+      umtTypeDescriptionElement.innerHTML = "";
       let descriptionList = app.data.umlTypes.find(type => type.value === umlTypeValue)?.description || [];
       if (descriptionList.length > 0) {
-        let descriptionText = "（例：" + descriptionList.join("、") + "）";
-        umtTypeDescriptionElement.textContent = descriptionText;
+        let ulElement = document.createElement('ul');
+        descriptionList.forEach(desc => {
+          let liElement = document.createElement('li');
+          liElement.textContent = desc;
+          ulElement.appendChild(liElement);
+        });
+        umtTypeDescriptionElement.appendChild(ulElement); 
       }
+    };
+
+    let setUmlTypeSubTitle = (umlTypeValue) => {
+      let umlTypeLabel = app.data.umlTypes.find(type => type.value === umlTypeValue)?.label || "";
+      umlTypeSubTitleElement.textContent = `${umlTypeLabel}の例`;
     };
 
     umlTypeSelectElement.addEventListener('change', (e) => {
@@ -110,6 +127,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       changeUmlTypeImage(e.target.value);
       setFormatPrompt(e.target.value);
       setUmlTypeDescription(e.target.value);
+      setUmlTypeSubTitle(e.target.value);
     });
 
     createUmlTypeOptions(umlTypeSelectElement);
