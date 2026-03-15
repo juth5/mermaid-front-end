@@ -66,20 +66,26 @@
   .bg-editor {
     background-color: #1E1E1E;
   }
+  .border-primary {
+    border-color: hsl(208, 56%, 41%);
+  }
+  .bg-orange {
+    background-color: #f39800 !important;
+  }
   </style>
 </head>
 <body>
   <div class="relative bg-off-white-gray s-px10 noto-sans-jp-400">
     <div class="container-1024 py20">
-      <h1 class="text-left bold mb20">Mermaidマークダウン</h1>
+      <h1 class="text-left bold mb30">Mermaid×AIを使って、設計書や説明資料に使う図を作成しよう。</h1>
       <form id="form">
-        <div class="mb20">
-          <h3 class="mb4 bold">UMLタイプ</h3>
+        <div class="mb30">
+          <h3 class="mb4 bold">UMLタイプを選択</h3>
           <div class="relative w200">
-            <select id="uml-type-select" class="input border w-full rounded-4 p6 bw2 cursor-pointer mb4"></select>
+            <select id="uml-type-select" class="input border border-primary w-full rounded-4 p6 bw2 cursor-pointer mb4"></select>
             <div class="absolute t7 r10 pointer-none">▼</div>
           </div>
-          <div id="uml-type-description"></div>
+          <div id="uml-type-description" class="lh15"></div>
         </div>
         <!-- <h3 class="text-left mb4">ChatGPTに指示を出してください</h3>
           <div class="relative">
@@ -89,16 +95,16 @@
           <div class="f fr">
             <button id="send-button" class="button w128 primary rounded-full">送信</button>
           </div> -->
-        <div class="mb20">
+        <div class="mb30">
           <h3 class="mb4 bold">以下のプロンプトを内容に含めて、AIに指示を出してください</h3>
           <div class="f fm flex-wrap">
-            <div id="format-prompt" class="border bw2 py6 px10 rounded-4 inline-block mr18 bg-white"></div>
-            <button type="button" id="prompt-copy-button" class="button primary rounded-full s-mt8">プロンプトをコピー</button>
+            <div id="format-prompt" class="border border-primary bw2 py6 px10 rounded-4 inline-block mr18 bg-white"></div>
+            <button type="button" id="prompt-copy-button" class="button primary rounded-full mt8">プロンプトをコピー</button>
           </div>
         </div>
 
-        <div class="mb20">
-          <h3 class="mb4">このような図が描けます</h3>
+        <div class="mb30">
+          <h3 id= "uml-type-sub-title" class="mb4">このような図が描けます</h3>
           <img id="uml-type-image" class="h500 block object-fit-contain">
         </div>
 
@@ -106,8 +112,8 @@
           <img id="preview-image" src="" alt="プレビュー">
           <button id="closeBtn">閉じる</button>
         </dialog>
-        <div class="mb20">
-          <h3 class="text-left mb4">Mermaidエディター</h3>
+        <div class="mb30">
+          <h3 class="text-left mb4">AIが生成したコードをMermaidエディターに貼り付け</h3>
           <div class="relative">
             <textarea id="editor" class="min-height-500 w-full p10 pb40 border border-gray-300 rounded border bw4 rounded-10 bg-editor text-white" placeholder="Mermaidエディター"></textarea>
               <div class="f fb absolute t15 r15">
@@ -119,14 +125,18 @@
             </div>
           </div>
         </div>
-        <div id="result-space" class="hide">
-          <h3 class="text-left mb4">Mermaid出力</h3>
-          <div id="preview" class="border rounded-10 mb4"></div>
-          <div class="f fr">
-            <button type="button" id="download-button" class="button w128 primary rounded-full">ダウンロード</button>
-          </div>
-        </div>
+
+        
       </form>
+    </div>
+    <div id="result-space" class="hide">
+      <div class="container-1024 f fbw fb mb4">
+        <h3 class="text-left mb4">Mermaid出力結果</h3>
+        <button type="button" id="download-button" class="button w128 bg-orange rounded-full text-white">ダウンロード</button>
+      </div>
+      <div class="p4">
+        <div id="preview" class="border border-primary rounded-10 mb4"></div>
+      </div>
     </div>
     <div id="loading-modal" class="absolute trbl0 bg-black opacity-50 hide">
       <div class="absolute trbl0 f fc mt200 text-white fs20">通信中...</div>
