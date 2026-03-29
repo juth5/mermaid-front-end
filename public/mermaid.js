@@ -126,7 +126,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       console.log(e.target.value, "選択されたオプションのデータセット");
       changeUmlTypeImage(e.target.value);
       setFormatPrompt(e.target.value);
-      setUmlTypeDescription(e.target.value);
+      // setUmlTypeDescription(e.target.value);
       setUmlTypeSubTitle(e.target.value);
     });
 
