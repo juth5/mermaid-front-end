@@ -5,7 +5,7 @@ let imageUrl = '';
 let loginButtonElement = {};
 let logoutButtonElement = {};
 
-
+window.location.href = "/mermaid";
 document.addEventListener('DOMContentLoaded', async () => {
   
   let textareaElement = document.getElementById("textarea");
