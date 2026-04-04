@@ -325,8 +325,16 @@ let createUmlTypeOptions = (selectElement) => {
 
 let downloadViaKroki = async (mermaidCode) => {
     try {
-        // 1. 文字列をUTF-8のバイト配列に変換
-        const bytes = new TextEncoder().encode(mermaidCode);
+        // ★裏技：文字サイズを無理やり巨大化させる設定を先頭に追加
+        // const giantConfig = `%%{init: {"themeVariables": {"fontSize": "36px"}}}%%\n`;
+
+        const giantConfig = `%%{init: {"themeVariables": {"fontSize": "36px"}, "gantt": {"rightPadding": 400}}}%%\n`;
+
+
+        const codeForKroki = giantConfig + mermaidCode;
+
+        // 1. 文字列をUTF-8のバイト配列に変換（★結合した codeForKroki を使う）
+        const bytes = new TextEncoder().encode(codeForKroki);
 
         // 2. CompressionStreamを使ってzlib(deflate)圧縮
         const cs = new CompressionStream('deflate');
@@ -360,4 +368,3 @@ let downloadViaKroki = async (mermaidCode) => {
         alert("画像生成に失敗しました。ブラウザがCompressionStreamに対応していない可能性があります。");
     }
 };
-

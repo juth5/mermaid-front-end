@@ -106,7 +106,9 @@
 
         <div class="mb30">
           <h3 id= "uml-type-sub-title" class="mb4">このような図が描けます</h3>
-          <img id="uml-type-image" class="h500 block object-fit-contain" alt="選択中の図のサンプル">
+          <div class="s-full f fh">
+            <img id="uml-type-image" class="h500 block object-fit-contain" alt="選択中の図のサンプル">
+          </div>
         </div>
 
         <dialog id="image-dialog">
@@ -131,12 +133,15 @@
       </form>
     </div>
     <div id="result-space" class="hide">
-      <div class="container-1024 f fbw fb mb4">
-        <h3 class="text-left mb4">Mermaid出力結果</h3>
-        <button type="button" id="download-button" class="button w128 bg-orange rounded-full text-white">ダウンロード</button>
+      <div class="container-1024 mb4">
+        <div class="f fbw fb">
+          <h3 class="text-left mb4">Mermaid出力結果</h3>
+          <button type="button" id="download-button" class="button w128 bg-orange rounded-full text-white">ダウンロード</button>
+        </div>
+        <div class="f fr text-red">※ガントチャートはダウンロードで表示崩れが起きます。スクリーンショットをご利用ください。</div>
       </div>
-      <div class="p4">
-        <div id="preview" class="border border-primary rounded-10 mb4"></div>
+      <div class="p4 f fh s-full">
+        <div id="preview" class="f fh s-full border border-primary rounded-10 mb4"></div>
       </div>
     </div>
     <div id="loading-modal" class="absolute trbl0 bg-black opacity-50 hide">
