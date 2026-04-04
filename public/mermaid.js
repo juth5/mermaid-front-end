@@ -154,7 +154,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         } catch (error) {
             console.error("Syntax Error:", error);
             // エラー時、ユーザーに通知するためにpreviewをクリアしたりメッセージを出したりする
-            preview.innerHTML = `<p style="color:red;">文法エラーが発生しています</p>`;
+            preview.innerHTML = `<p style="color:red;">文法エラーが発生しています。再度AIに指示を出してください。</p>`;
             return false;
         }
     };
