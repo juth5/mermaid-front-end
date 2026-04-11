@@ -33,6 +33,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     const umtTypeDescriptionElement = document.getElementById('uml-type-description');
     const umlTypeSubTitleElement = document.getElementById('uml-type-sub-title');
     const scaleButton = document.getElementById('scale-button');
+    const promptExampleTitleElement = document.getElementById('prompt-example-title');
+    const formatPromptExampleElement = document.getElementById('format-prompt-example');
 
     outputButton.addEventListener('click', async () => {
         let result = await renderChart();
@@ -94,18 +96,27 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
     });
 
-
-
     let setFormatPrompt = (umlTypeValue) => {
       formatPromptElement.textContent = "";
-      let main_prompt = app.data.umlTypes.find(type => type.value === umlTypeValue)?.main_prompt || "";
+      let main_prompt = app.data.chartTypeOptions.find(type => type.value === umlTypeValue)?.main_prompt || "";
       let promptText = `mermaidで${main_prompt}`;      
       formatPromptElement.textContent = promptText;
+    };
+
+    let setFormatPromptTitle = (umlTypeValue) => {
+      let umlTypeLabel = app.data.chartTypeOptions.find(type => type.value === umlTypeValue)?.label || "";
+      promptExampleTitleElement.textContent = `${umlTypeLabel}のプロンプト例（上記のプロンプトを含めて、以下を参考にしてAIに指示を出してください）`;
+    };
+
+    let setFormatPromptExample = (umlTypeValue) => {
+      formatPromptExampleElement.textContent = "";
+      let sample_prompt = app.data.chartTypeOptions.find(type => type.value === umlTypeValue)?.sample_prompt || "";
+      formatPromptExampleElement.textContent = sample_prompt;
     };
     
     let setUmlTypeDescription = (umlTypeValue) => {
       umtTypeDescriptionElement.innerHTML = "";
-      let descriptionList = app.data.umlTypes.find(type => type.value === umlTypeValue)?.description || [];
+      let descriptionList = app.data.chartTypeOptions.find(type => type.value === umlTypeValue)?.description || [];
       if (descriptionList.length > 0) {
         let ulElement = document.createElement('ul');
         descriptionList.forEach(desc => {
@@ -118,7 +129,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     };
 
     let setUmlTypeSubTitle = (umlTypeValue) => {
-      let umlTypeLabel = app.data.umlTypes.find(type => type.value === umlTypeValue)?.label || "";
+      let umlTypeLabel = app.data.chartTypeOptions.find(type => type.value === umlTypeValue)?.label || "";
       umlTypeSubTitleElement.textContent = `${umlTypeLabel}の例`;
     };
 
@@ -128,6 +139,8 @@ document.addEventListener('DOMContentLoaded', async () => {
       setFormatPrompt(e.target.value);
       // setUmlTypeDescription(e.target.value);
       setUmlTypeSubTitle(e.target.value);
+      setFormatPromptTitle(e.target.value);
+      setFormatPromptExample(e.target.value);
     });
 
     createUmlTypeOptions(umlTypeSelectElement);
@@ -312,7 +325,7 @@ let setLoadingModal = (isLoading) => {
 
 
 let createUmlTypeOptions = (selectElement) => {
-  app.data.umlTypes.forEach(umlType => {
+  app.data.chartTypeOptions.forEach(umlType => {
     const option = document.createElement('option');
     option.value = umlType.value;
     option.textContent = umlType.label;
