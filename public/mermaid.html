@@ -37,42 +37,45 @@
         margin-left: 1.5rem;
       }
 
-  .noto-sans-jp-400 {
-    font-family: "Noto Sans JP", sans-serif;
-    font-optical-sizing: auto;
-    font-weight: 400;
-    font-style: normal;
-  }
-  .active-button {
-    background-color: #4CAF50;
-    color: white;
-    padding: 10px 15px;
-  }
-  .min-height-500 {
-    min-height: 500px;
-  }
-  .min-height-300 {
-    min-height: 300px;
-  }
-  .rounded-full {
-    border-radius: 9999px !important;
-  }
-  .mt200 {
-    margin-top: 200px !important;
-  }
-  .no-scroll {
-    height: 100vh;
-    overflow: hidden;
-  }
-  .bg-editor {
-    background-color: #1E1E1E;
-  }
-  .border-primary {
-    border-color: hsl(208, 56%, 41%);
-  }
-  .bg-orange {
-    background-color: #f39800 !important;
-  }
+    .noto-sans-jp-400 {
+      font-family: "Noto Sans JP", sans-serif;
+      font-optical-sizing: auto;
+      font-weight: 400;
+      font-style: normal;
+    }
+    .active-button {
+      background-color: #4CAF50;
+      color: white;
+      padding: 10px 15px;
+    }
+    .min-height-500 {
+      min-height: 500px;
+    }
+    .min-height-300 {
+      min-height: 300px;
+    }
+    .rounded-full {
+      border-radius: 9999px !important;
+    }
+    .mt200 {
+      margin-top: 200px !important;
+    }
+    .no-scroll {
+      height: 100vh;
+      overflow: hidden;
+    }
+    .bg-editor {
+      background-color: #1E1E1E;
+    }
+    .border-primary {
+      border-color: hsl(208, 56%, 41%);
+    }
+    .bg-orange {
+      background-color: #f39800 !important;
+    }
+    .border-orange {
+      border-color: #f39800 !important;
+    }
   </style>
 </head>
 <body>
@@ -101,6 +104,13 @@
           <div class="f fm flex-wrap">
             <div id="format-prompt" class="border border-primary bw2 py6 px10 rounded-4 inline-block mr18 bg-white"></div>
             <button type="button" id="prompt-copy-button" class="button primary rounded-full mt8">プロンプトをコピー</button>
+          </div>
+        </div>
+
+        <div class="mb30">
+          <h3 id="prompt-example-title" class="mb4">プロンプトの例</h3>
+          <div class="s-full f fh">
+            <div id="format-prompt-example" class="s-full border border-orange bw2 py6 px10 rounded-4 inline-block mr18 bg-white"></div>
           </div>
         </div>
 
