@@ -22,141 +22,513 @@
 </script>
   <title>Mermaid</title>
   <style>
-    .min-h200 {
-      min-height: 200px;
+    /* ── Ocean base ── */
+    :root {
+      --ocean-deep:   #03182e;
+      --ocean-mid:    #0a2e52;
+      --ocean-light:  #0e4a7a;
+      --teal:         #00c9b1;
+      --teal-dark:    #00876e;
+      --aqua:         #7fddea;
+      --coral:        #ff6f7a;
+      --pearl:        rgba(255,255,255,0.12);
+      --glass-bg:     rgba(10, 50, 90, 0.55);
+      --glass-border: rgba(0, 201, 177, 0.35);
     }
-    textarea::placeholder {
-      color: #999; /* 任意の色 */
-      opacity: 1;  /* ブラウザによって薄くなるのを防ぐ */
-    }
-    .bg-off-white-gray {
-      background-color: #F8F7F5;
-    }
-    ul, ol {
-        margin-top: 0.5rem;
-        margin-left: 1.5rem;
-      }
 
-    .noto-sans-jp-400 {
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      background: linear-gradient(180deg, var(--ocean-deep) 0%, var(--ocean-mid) 50%, #041828 100%);
+      min-height: 100vh;
       font-family: "Noto Sans JP", sans-serif;
-      font-optical-sizing: auto;
-      font-weight: 400;
-      font-style: normal;
+      color: #d4f0ff;
+      overflow-x: hidden;
     }
-    .active-button {
-      background-color: #4CAF50;
-      color: white;
-      padding: 10px 15px;
+
+    /* ── Light rays ── */
+    body::before {
+      content: '';
+      position: fixed;
+      top: -10%;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 160%;
+      height: 60vh;
+      background: conic-gradient(
+        from 270deg at 50% 0%,
+        transparent 30deg,
+        rgba(0,201,177,0.07) 40deg,
+        transparent 50deg,
+        rgba(127,221,234,0.05) 60deg,
+        transparent 70deg,
+        rgba(0,201,177,0.06) 80deg,
+        transparent 90deg
+      );
+      pointer-events: none;
+      z-index: 0;
+      animation: rays 8s ease-in-out infinite alternate;
     }
-    .min-height-500 {
-      min-height: 500px;
+    @keyframes rays {
+      from { opacity: 0.6; transform: translateX(-50%) scaleX(1); }
+      to   { opacity: 1;   transform: translateX(-50%) scaleX(1.08); }
     }
-    .min-height-300 {
-      min-height: 300px;
-    }
-    .rounded-full {
-      border-radius: 9999px !important;
-    }
-    .mt200 {
-      margin-top: 200px !important;
-    }
-    .no-scroll {
-      height: 100vh;
+
+    /* ── Bubbles ── */
+    .bubbles {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
       overflow: hidden;
     }
-    .bg-editor {
-      background-color: #1E1E1E;
+    .bubble {
+      position: absolute;
+      bottom: -60px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 35% 35%, rgba(255,255,255,0.55), rgba(127,221,234,0.15));
+      border: 1px solid rgba(255,255,255,0.25);
+      animation: rise linear infinite;
     }
-    .border-primary {
-      border-color: hsl(208, 56%, 41%);
+    .bubble:nth-child(1)  { left:  5%; width:12px; height:12px; animation-duration:9s;  animation-delay:0s; }
+    .bubble:nth-child(2)  { left: 15%; width: 7px; height: 7px; animation-duration:13s; animation-delay:2s; }
+    .bubble:nth-child(3)  { left: 25%; width:18px; height:18px; animation-duration:10s; animation-delay:4s; }
+    .bubble:nth-child(4)  { left: 40%; width: 9px; height: 9px; animation-duration:11s; animation-delay:1s; }
+    .bubble:nth-child(5)  { left: 55%; width:14px; height:14px; animation-duration: 8s; animation-delay:5s; }
+    .bubble:nth-child(6)  { left: 65%; width: 6px; height: 6px; animation-duration:15s; animation-delay:0s; }
+    .bubble:nth-child(7)  { left: 75%; width:20px; height:20px; animation-duration:12s; animation-delay:3s; }
+    .bubble:nth-child(8)  { left: 85%; width:10px; height:10px; animation-duration: 9s; animation-delay:6s; }
+    .bubble:nth-child(9)  { left: 92%; width: 5px; height: 5px; animation-duration:14s; animation-delay:2s; }
+    .bubble:nth-child(10) { left: 32%; width:16px; height:16px; animation-duration:11s; animation-delay:7s; }
+    @keyframes rise {
+      0%   { transform: translateY(0) translateX(0)  scale(1);    opacity:0; }
+      10%  { opacity: 0.8; }
+      90%  { opacity: 0.5; }
+      100% { transform: translateY(-110vh) translateX(20px) scale(1.1); opacity:0; }
     }
-    .bg-orange {
-      background-color: #f39800 !important;
+
+    /* ── Seaweed ── */
+    .seaweed {
+      position: fixed;
+      bottom: 0;
+      width: 28px;
+      pointer-events: none;
+      z-index: 0;
     }
-    .border-orange {
-      border-color: #f39800 !important;
+    .seaweed svg { animation: sway 4s ease-in-out infinite alternate; transform-origin: bottom center; }
+    .seaweed-left  { left: 2%; }
+    .seaweed-left2 { left: 6%; animation-delay: 0.8s; }
+    .seaweed-right  { right: 2%; }
+    .seaweed-right2 { right: 6%; animation-delay: 1.2s; }
+    @keyframes sway {
+      from { transform: rotate(-10deg); }
+      to   { transform: rotate(10deg);  }
     }
+
+    /* ── Layout ── */
+    .ocean-page {
+      position: relative;
+      z-index: 1;
+      padding: 0 16px 60px;
+    }
+
+    /* ── Header ── */
+    .ocean-header {
+      text-align: center;
+      padding: 48px 0 32px;
+    }
+    .ocean-header h1 {
+      font-size: clamp(1.4rem, 3vw, 2rem);
+      font-weight: 700;
+      background: linear-gradient(135deg, #ffffff 0%, var(--aqua) 50%, var(--teal) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin: 0;
+      text-shadow: none;
+      letter-spacing: 0.02em;
+    }
+    .ocean-header .subtitle {
+      color: var(--aqua);
+      opacity: 0.75;
+      font-size: 0.85rem;
+      margin-top: 8px;
+    }
+
+    /* ── Glass card ── */
+    .glass-card {
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: 16px;
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      padding: 24px;
+      margin-bottom: 24px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.07);
+    }
+    .glass-card h3 {
+      color: var(--aqua);
+      margin: 0 0 14px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .glass-card h3::before {
+      content: '';
+      display: inline-block;
+      width: 4px;
+      height: 16px;
+      background: linear-gradient(180deg, var(--teal), var(--aqua));
+      border-radius: 2px;
+    }
+
+    /* ── Select ── */
+    .ocean-select-wrap {
+      position: relative;
+      width: 220px;
+    }
+    .ocean-select-wrap select {
+      width: 100%;
+      background: rgba(0,30,60,0.7);
+      border: 1px solid var(--glass-border);
+      color: #d4f0ff;
+      padding: 10px 36px 10px 14px;
+      border-radius: 10px;
+      font-size: 0.9rem;
+      appearance: none;
+      cursor: pointer;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .ocean-select-wrap select:hover { border-color: var(--teal); }
+    .ocean-select-wrap select option { background: var(--ocean-mid); }
+    .ocean-select-arrow {
+      position: absolute;
+      top: 50%; right: 12px;
+      transform: translateY(-50%);
+      color: var(--teal);
+      pointer-events: none;
+      font-size: 0.7rem;
+    }
+
+    /* ── Prompt box ── */
+    .prompt-box {
+      background: rgba(0,20,45,0.7);
+      border: 1px solid var(--glass-border);
+      border-radius: 10px;
+      padding: 14px 16px;
+      color: #b8e8f8;
+      font-size: 0.88rem;
+      line-height: 1.7;
+      margin-bottom: 12px;
+    }
+    .prompt-example-box {
+      background: rgba(0,20,45,0.7);
+      border: 1px solid rgba(255,111,122,0.4);
+      border-radius: 10px;
+      padding: 14px 16px;
+      color: #ffd4d8;
+      font-size: 0.88rem;
+      line-height: 1.7;
+    }
+
+    /* ── Buttons ── */
+    .btn-ocean {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 10px 22px;
+      border-radius: 9999px;
+      border: none;
+      cursor: pointer;
+      font-family: inherit;
+      font-size: 0.88rem;
+      font-weight: 600;
+      transition: transform 0.15s, box-shadow 0.15s;
+    }
+    .btn-ocean:active { transform: scale(0.97); }
+
+    .btn-teal {
+      background: linear-gradient(135deg, var(--teal-dark), var(--teal));
+      color: #001a10;
+      box-shadow: 0 4px 16px rgba(0,201,177,0.35);
+    }
+    .btn-teal:hover { box-shadow: 0 6px 22px rgba(0,201,177,0.55); }
+
+    .btn-coral {
+      background: linear-gradient(135deg, #c94b55, var(--coral));
+      color: #fff;
+      box-shadow: 0 4px 16px rgba(255,111,122,0.3);
+    }
+    .btn-coral:hover { box-shadow: 0 6px 22px rgba(255,111,122,0.5); }
+
+    .btn-amber {
+      background: linear-gradient(135deg, #c97a00, #f3a800);
+      color: #1a0e00;
+      box-shadow: 0 4px 16px rgba(243,168,0,0.3);
+    }
+    .btn-amber:hover { box-shadow: 0 6px 22px rgba(243,168,0,0.5); }
+
+    .btn-ghost {
+      background: transparent;
+      border: 1px solid var(--glass-border);
+      color: var(--aqua);
+    }
+    .btn-ghost:hover { background: rgba(0,201,177,0.12); }
+
+    /* ── Editor ── */
+    .ocean-editor {
+      width: 100%;
+      min-height: 500px;
+      padding: 14px;
+      padding-bottom: 60px;
+      background: rgba(1, 10, 22, 0.85);
+      border: 1px solid var(--glass-border);
+      border-radius: 12px;
+      color: #a8e6cf;
+      font-family: "Fira Code", "Courier New", monospace;
+      font-size: 0.88rem;
+      line-height: 1.7;
+      resize: vertical;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .ocean-editor:focus { border-color: var(--teal); }
+    .ocean-editor::placeholder { color: rgba(127,221,234,0.35); }
+
+    /* ── Sample image ── */
+    #uml-type-image {
+      max-height: 500px;
+      border-radius: 12px;
+      border: 1px solid var(--glass-border);
+      box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+    }
+
+    /* ── Result section ── */
+    #result-space.hide { display: none; }
+    #preview {
+      border: 1px solid var(--glass-border);
+      border-radius: 12px;
+      background: rgba(255,255,255,0.96);
+      min-height: 200px;
+      padding: 24px;
+    }
+
+    /* ── Loading modal ── */
+    #loading-modal {
+      position: fixed;
+      inset: 0;
+      background: rgba(1,8,20,0.75);
+      backdrop-filter: blur(4px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+    }
+    #loading-modal.hide { display: none; }
+    .loading-inner {
+      text-align: center;
+      color: var(--aqua);
+    }
+    .wave-dots {
+      display: flex;
+      gap: 8px;
+      justify-content: center;
+      margin-top: 16px;
+    }
+    .wave-dots span {
+      width: 10px; height: 10px;
+      border-radius: 50%;
+      background: var(--teal);
+      animation: waveDot 1.2s ease-in-out infinite;
+    }
+    .wave-dots span:nth-child(2) { animation-delay: 0.2s; }
+    .wave-dots span:nth-child(3) { animation-delay: 0.4s; }
+    @keyframes waveDot {
+      0%, 80%, 100% { transform: scale(0.6); opacity: 0.4; }
+      40%           { transform: scale(1.2); opacity: 1;   }
+    }
+
+    /* ── Dialog ── */
+    #image-dialog {
+      border: 1px solid var(--glass-border);
+      border-radius: 12px;
+      background: var(--ocean-mid);
+      color: #d4f0ff;
+      padding: 20px;
+    }
+
+    /* ── Notice ── */
+    .notice-text {
+      color: var(--coral);
+      font-size: 0.8rem;
+      margin-top: 6px;
+    }
+
+    /* ── Util ── */
+    .container-1024 { max-width: 1024px; margin: 0 auto; }
+    .flex-row   { display: flex; align-items: center; }
+    .flex-end   { justify-content: flex-end; }
+    .flex-between { justify-content: space-between; }
+    .gap12 { gap: 12px; }
+    .gap8  { gap: 8px; }
+    .mt8  { margin-top: 8px; }
+    .mt12 { margin-top: 12px; }
+    .relative { position: relative; }
+
+    /* ── Keep meltline helpers that mermaid.js references ── */
+    .hide { display: none !important; }
+    .no-scroll { overflow: hidden; height: 100vh; }
+    .f    { display: flex; }
+    .fh   { justify-content: center; align-items: center; }
+    .fb   { align-items: flex-end; }
+    .fr   { justify-content: flex-end; }
+    .fbw  { justify-content: space-between; }
+    .s-full { width: 100%; }
+    .bold { font-weight: 700; }
+    .text-red { color: var(--coral); }
+    .bg-red { background: var(--coral); }
+    .bg-orange { background: linear-gradient(135deg,#c97a00,#f3a800) !important; }
+    .text-white { color: #fff; }
+    .absolute { position: absolute; }
+    .trbl0 { top:0; right:0; bottom:0; left:0; }
+    .border-primary { border-color: var(--glass-border); }
+
+    ul, ol { margin-top: 0.5rem; margin-left: 1.5rem; }
   </style>
 </head>
 <body>
-  <div class="relative bg-off-white-gray s-px10 noto-sans-jp-400">
-    <div class="container-1024 py20">
-      <h1 class="text-left bold mb30">MermaidとAIの力で、作図時間を短縮しよう。</h1>
+
+  <!-- Bubbles -->
+  <div class="bubbles">
+    <div class="bubble"></div>
+    <div class="bubble"></div>
+    <div class="bubble"></div>
+    <div class="bubble"></div>
+    <div class="bubble"></div>
+    <div class="bubble"></div>
+    <div class="bubble"></div>
+    <div class="bubble"></div>
+    <div class="bubble"></div>
+    <div class="bubble"></div>
+  </div>
+
+  <!-- Seaweed -->
+  <div class="seaweed seaweed-left">
+    <svg viewBox="0 0 28 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M14 120 C14 100 4 90 8 70 C12 50 22 45 18 25 C15 10 10 5 14 0" stroke="#00876e" stroke-width="3" stroke-linecap="round"/>
+    </svg>
+  </div>
+  <div class="seaweed seaweed-left2" style="width:20px">
+    <svg viewBox="0 0 20 90" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M10 90 C10 75 3 65 6 48 C9 32 17 28 14 14 C12 5 8 2 10 0" stroke="#00c9b1" stroke-width="2.5" stroke-linecap="round"/>
+    </svg>
+  </div>
+  <div class="seaweed seaweed-right">
+    <svg viewBox="0 0 28 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M14 120 C14 100 24 90 20 70 C16 50 6 45 10 25 C13 10 18 5 14 0" stroke="#00876e" stroke-width="3" stroke-linecap="round"/>
+    </svg>
+  </div>
+  <div class="seaweed seaweed-right2" style="width:20px">
+    <svg viewBox="0 0 20 90" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M10 90 C10 75 17 65 14 48 C11 32 3 28 6 14 C8 5 12 2 10 0" stroke="#00c9b1" stroke-width="2.5" stroke-linecap="round"/>
+    </svg>
+  </div>
+
+  <div class="ocean-page">
+    <div class="container-1024">
+
+      <!-- Header -->
+      <div class="ocean-header">
+        <h1>🧜‍♀️ MermaidとAIの力で、作図時間を短縮しよう</h1>
+        <p class="subtitle">深海からアイデアを引き上げ、美しい図として形にする</p>
+      </div>
+
       <form id="form">
-        <div class="mb30">
-          <h3 class="mb4 bold">図のタイプを選択</h3>
-          <div class="relative w200">
-            <select id="uml-type-select" class="input border border-primary w-full rounded-4 p6 bw2 cursor-pointer mb4"></select>
-            <div class="absolute t7 r10 pointer-none">▼</div>
-          </div>
-          <!-- <div id="uml-type-description" class="lh15"></div> -->
-        </div>
-        <!-- <h3 class="text-left mb4">ChatGPTに指示を出してください</h3>
-          <div class="relative">
-            <textarea id="prompt-input-area" class="min-height-300 w-full p10 pt36 border border-gray-300 rounded border bw4 rounded-10" required></textarea>
-            <div id="default-prompt" class="absolute t10 l12"></div>
-          </div>
-          <div class="f fr">
-            <button id="send-button" class="button w128 primary rounded-full">送信</button>
-          </div> -->
-        <div class="mb30">
-          <h3 class="mb4 bold">以下のプロンプトを内容に含めて、AIに指示を出してください</h3>
-          <div class="f fm flex-wrap">
-            <div id="format-prompt" class="border border-primary bw2 py6 px10 rounded-4 inline-block mr18 bg-white"></div>
-            <button type="button" id="prompt-copy-button" class="button primary rounded-full mt8">プロンプトをコピー</button>
+
+        <!-- Step 1: 図タイプ選択 -->
+        <div class="glass-card">
+          <h3>図のタイプを選択</h3>
+          <div class="ocean-select-wrap">
+            <select id="uml-type-select"></select>
+            <div class="ocean-select-arrow">▼</div>
           </div>
         </div>
 
-        <div class="mb30">
-          <h3 id="prompt-example-title" class="mb4">プロンプトの例</h3>
-          <div class="s-full f fh">
-            <div id="format-prompt-example" class="s-full border border-orange bw2 py6 px10 rounded-4 inline-block mr18 bg-white"></div>
+        <!-- Step 2: プロンプト -->
+        <div class="glass-card">
+          <h3>以下のプロンプトを内容に含めて、AIに指示を出してください</h3>
+          <div id="format-prompt" class="prompt-box"></div>
+          <div style="margin-top:12px">
+            <button type="button" id="prompt-copy-button" class="btn-ocean btn-teal">📋 プロンプトをコピー</button>
           </div>
         </div>
 
-        <div class="mb30">
-          <h3 id= "uml-type-sub-title" class="mb4">このような図が描けます</h3>
-          <div class="s-full f fh">
-            <img id="uml-type-image" class="h500 block object-fit-contain" alt="選択中の図のサンプル">
+        <!-- Step 3: プロンプト例 -->
+        <div class="glass-card">
+          <h3 id="prompt-example-title">プロンプトの例</h3>
+          <div id="format-prompt-example" class="prompt-example-box s-full"></div>
+        </div>
+
+        <!-- Step 4: サンプル画像 -->
+        <div class="glass-card">
+          <h3 id="uml-type-sub-title">このような図が描けます</h3>
+          <div class="f fh s-full" style="background:#fff;border-radius:12px;padding:20px">
+            <img id="uml-type-image" style="max-height:500px;border-radius:8px" alt="選択中の図のサンプル">
           </div>
         </div>
 
-        <dialog id="image-dialog">
+        <dialog id="image-dialog" style="border:1px solid var(--glass-border);border-radius:12px;background:var(--ocean-mid);color:#d4f0ff;padding:20px">
           <img id="preview-image" src="" alt="プレビュー">
-          <button id="closeBtn">閉じる</button>
+          <button id="closeBtn" class="btn-ocean btn-ghost" style="margin-top:12px">閉じる</button>
         </dialog>
-        <div class="mb30">
-          <h3 class="text-left mb4">AIが生成したコードをMermaidエディターに貼り付け</h3>
+
+        <!-- Step 5: エディタ -->
+        <div class="glass-card">
+          <h3>AIが生成したコードをMermaidエディターに貼り付け</h3>
           <div class="relative">
-            <textarea id="editor" class="min-height-500 w-full p10 pb40 border border-gray-300 rounded border bw4 rounded-10 bg-editor text-white" placeholder="Mermaidエディター"></textarea>
-              <div class="f fb absolute t15 r15">
-                <button type="button" id="copy-code-button" class="button w128 rounded-full primary text-white">コードをコピー</button>
-              </div>
-            <div class="f fb absolute b15 r15">
-              <button type="button" id="clear-button" class="button w128 rounded-full bg-red text-white mr12">クリア</button>
-              <button id="output-button" class="button w128 primary rounded-full" type="button">表示</button>
+            <textarea id="editor" class="ocean-editor" placeholder="ここにMermaidコードを貼り付けてください…"></textarea>
+            <div style="position:absolute;top:12px;right:12px">
+              <button type="button" id="copy-code-button" class="btn-ocean btn-teal">コードをコピー</button>
+            </div>
+            <div style="position:absolute;bottom:12px;right:12px;display:flex;gap:10px">
+              <button type="button" id="clear-button" class="btn-ocean btn-coral">クリア</button>
+              <button id="output-button" class="btn-ocean btn-teal" type="button">🌊 表示</button>
             </div>
           </div>
         </div>
 
-        
       </form>
-    </div>
-    <div id="result-space" class="hide">
-      <div class="container-1024 mb4">
-        <div class="f fbw fb">
-          <h3 class="text-left mb4">Mermaid出力結果</h3>
-          <button type="button" id="download-button" class="button w128 bg-orange rounded-full text-white">ダウンロード</button>
+
+      <!-- Result -->
+      <div id="result-space" class="hide">
+        <div class="glass-card">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+            <h3 style="margin:0">Mermaid出力結果</h3>
+            <button type="button" id="download-button" class="btn-ocean btn-amber">⬇ ダウンロード</button>
+          </div>
+          <p class="notice-text">※ガントチャートはダウンロードで表示崩れが起きます。スクリーンショットをご利用ください。</p>
+          <div id="preview" class="f fh s-full" style="background:rgba(255,255,255,0.96);border-radius:12px;min-height:200px;padding:24px;margin-top:12px"></div>
         </div>
-        <div class="f fr text-red">※ガントチャートはダウンロードで表示崩れが起きます。スクリーンショットをご利用ください。</div>
       </div>
-      <div class="p4 f fh s-full">
-        <div id="preview" class="f fh s-full border border-primary rounded-10 mb4"></div>
-      </div>
-    </div>
-    <div id="loading-modal" class="absolute trbl0 bg-black opacity-50 hide">
-      <div class="absolute trbl0 f fc mt200 text-white fs20">通信中...</div>
+
     </div>
   </div>
+
+  <!-- Loading modal -->
+  <div id="loading-modal" class="hide" style="position:fixed;inset:0;background:rgba(1,8,20,0.8);backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center;z-index:9999">
+    <div style="text-align:center;color:#7fddea">
+      <div style="font-size:1.1rem;letter-spacing:0.05em">🌊 深海と交信中…</div>
+      <div class="wave-dots" style="display:flex;gap:8px;justify-content:center;margin-top:16px">
+        <span style="width:10px;height:10px;border-radius:50%;background:#00c9b1;display:inline-block;animation:waveDot 1.2s ease-in-out infinite"></span>
+        <span style="width:10px;height:10px;border-radius:50%;background:#00c9b1;display:inline-block;animation:waveDot 1.2s ease-in-out infinite;animation-delay:0.2s"></span>
+        <span style="width:10px;height:10px;border-radius:50%;background:#00c9b1;display:inline-block;animation:waveDot 1.2s ease-in-out infinite;animation-delay:0.4s"></span>
+      </div>
+    </div>
+  </div>
+
 </body>
 </html>
