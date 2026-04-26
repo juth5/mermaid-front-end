@@ -1,13 +1,13 @@
 import app from './app.js';
 import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
 
-
-
-mermaid.initialize({ 
+mermaid.initialize({
     startOnLoad: false,
     theme: 'default',
-    securityLevel: 'loose', // これを追加
+    securityLevel: 'loose',
 });
+
+let lastRenderedSvg = null;
 
 
 
@@ -18,6 +18,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const outputButton = document.getElementById('output-button');
     const sendButton = document.getElementById('send-button');
     const downloadButton = document.getElementById('download-button');
+    const downloadSvgButton = document.getElementById('download-svg-button');
     const resultSpaceElement = document.getElementById('result-space');
     const formElement = document.getElementById('form');
     const clearButton = document.getElementById('clear-button');
@@ -48,7 +49,11 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
 
     downloadButton.addEventListener('click', async () => {
-        downloadViaKroki(editor.value);
+        await downloadAsPng();
+    });
+
+    downloadSvgButton.addEventListener('click', () => {
+        downloadAsSvg();
     });
 
     formElement.addEventListener('submit', async(e) => {
@@ -153,20 +158,19 @@ document.addEventListener('DOMContentLoaded', async () => {
             // IDを一意にする（Date.now()などを使って重複を避けるのが安全です）
             const id = 'mermaid-svg-' + Date.now();
             
-            // v10のrenderは第2引数にコードを渡します
             const { svg, bindFunctions } = await mermaid.render(id, code);
-            
+
+            lastRenderedSvg = svg;
             preview.innerHTML = svg;
 
-            // ズームなどのインタラクションがある図の場合、これを呼ぶ必要があります
             if (bindFunctions) {
                 bindFunctions(preview);
             }
-            
+
             return true;
         } catch (error) {
             console.error("Syntax Error:", error);
-            // エラー時、ユーザーに通知するためにpreviewをクリアしたりメッセージを出したりする
+            lastRenderedSvg = null;
             preview.innerHTML = `<p style="color:red;">文法エラーが発生しています。再度AIに指示を出してください。</p>`;
             return false;
         }
@@ -238,73 +242,94 @@ let cleanMermaidCode = (aiResponse) => {
     // 4. どちらにも該当しない場合、AIがコードだけを返したと判断して全文を返す
     return aiResponse.trim();
 };
-let downloadMermaidImage = async () => {
-    const preview = document.getElementById('preview');
-    const svgElement = preview.querySelector('svg');
+let downloadAsPng = async () => {
+    if (!lastRenderedSvg) {
+        alert("まずダイアグラムを表示してください。");
+        return;
+    }
 
-    if (!svgElement) return;
+    try {
+        const parser = new DOMParser();
+        const svgDoc = parser.parseFromString(lastRenderedSvg, 'image/svg+xml');
+        const svgEl = svgDoc.querySelector('svg');
 
-    // 1. 実際の描画範囲（BBox）を取得
-    const bBox = svgElement.getBBox();
-    const viewBox = svgElement.viewBox.baseVal;
-    
-    // 2. 基本サイズを決定
-    const baseWidth = viewBox.width || bBox.width;
-    const baseHeight = viewBox.height || bBox.height;
-    const minX = viewBox.x || bBox.x;
-    const minY = viewBox.y || bBox.y;
+        // viewBox からサイズを取得
+        let width = 800, height = 600;
+        const viewBox = svgEl.getAttribute('viewBox');
+        if (viewBox) {
+            const parts = viewBox.trim().split(/[\s,]+/).map(Number);
+            if (parts.length >= 4 && parts[2] > 0 && parts[3] > 0) {
+                width = parts[2];
+                height = parts[3];
+            }
+        }
+        const attrW = parseFloat(svgEl.getAttribute('width'));
+        const attrH = parseFloat(svgEl.getAttribute('height'));
+        if (!isNaN(attrW) && attrW > 0) width = attrW;
+        if (!isNaN(attrH) && attrH > 0) height = attrH;
 
-    // 【重要】上下左右に10pxずつの余白（パディング）を設定
-    const padding = 20; 
+        svgEl.setAttribute('width', width);
+        svgEl.setAttribute('height', height);
+        svgEl.style.cssText = 'background:white;';
 
-    const canvas = document.createElement("canvas");
-    const scale = 2; // 高解像度
-    
-    // キャンバスサイズをパディング分大きくする
-    canvas.width = (baseWidth + padding * 2) * scale;
-    canvas.height = (baseHeight + padding * 2) * scale;
-    const ctx = canvas.getContext("2d");
+        const padding = 20;
+        const scale = 2;
 
-    // 3. SVGをクローンし、サイズを調整
-    const clonedSvg = svgElement.cloneNode(true);
-    clonedSvg.setAttribute("width", baseWidth);
-    clonedSvg.setAttribute("height", baseHeight);
-    clonedSvg.style.backgroundColor = "white";
+        const canvas = document.createElement('canvas');
+        canvas.width = (width + padding * 2) * scale;
+        canvas.height = (height + padding * 2) * scale;
+        const ctx = canvas.getContext('2d');
 
-    // clonedSvg を作成した後にこれを追加
-    clonedSvg.style.fontFamily = "Arial, sans-serif";
-    const textElements = clonedSvg.querySelectorAll('text');
-    textElements.forEach(text => {
-        text.style.fontFamily = "Arial, sans-serif";
-    });
-
-    const svgData = new XMLSerializer().serializeToString(clonedSvg);
-    const img = new Image();
-    const svgBlob = new Blob([svgData], { type: "image/svg+xml;charset=utf-8" });
-    const url = URL.createObjectURL(svgBlob);
-
-    img.onload = () => {
-        // 背景を白で塗りつぶす
-        ctx.fillStyle = "white";
+        ctx.fillStyle = '#ffffff';
         ctx.fillRect(0, 0, canvas.width, canvas.height);
-        
         ctx.scale(scale, scale);
-        
-        // 【修正ポイント】パディング分だけさらに内側に移動させる
-        // これで端の線が切れるのを防ぎます
-        ctx.translate(-minX + padding, -minY + padding);
-        
-        ctx.drawImage(img, 0, 0);
+        ctx.translate(padding, padding);
 
-        const pngUrl = canvas.toDataURL("image/png");
-        const link = document.createElement("a");
-        link.href = pngUrl;
-        link.download = `mermaid_perfect_${Date.now()}.png`;
-        link.click();
+        const serialized = new XMLSerializer().serializeToString(svgEl);
+        const blob = new Blob([serialized], { type: 'image/svg+xml;charset=utf-8' });
+        const url = URL.createObjectURL(blob);
 
-        URL.revokeObjectURL(url);
-    };
-    img.src = url;
+        await new Promise((resolve, reject) => {
+            const img = new Image();
+            img.onload = () => {
+                ctx.drawImage(img, 0, 0, width, height);
+                canvas.toBlob(pngBlob => {
+                    const link = document.createElement('a');
+                    link.href = URL.createObjectURL(pngBlob);
+                    link.download = `mermaid_${Date.now()}.png`;
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                    resolve();
+                }, 'image/png');
+                URL.revokeObjectURL(url);
+            };
+            img.onerror = () => {
+                URL.revokeObjectURL(url);
+                reject(new Error('SVG→Image変換に失敗しました'));
+            };
+            img.src = url;
+        });
+    } catch (err) {
+        console.error('PNG download error:', err);
+        alert("PNG変換に失敗しました。SVGでダウンロードしてください。");
+    }
+};
+
+let downloadAsSvg = () => {
+    if (!lastRenderedSvg) {
+        alert("まずダイアグラムを表示してください。");
+        return;
+    }
+    const blob = new Blob([lastRenderedSvg], { type: 'image/svg+xml;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `mermaid_${Date.now()}.svg`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
 };
 
 
@@ -336,48 +361,3 @@ let createUmlTypeOptions = (selectElement) => {
     selectElement.dispatchEvent(event);
 };
 
-let downloadViaKroki = async (mermaidCode) => {
-    try {
-        // ★裏技：文字サイズを無理やり巨大化させる設定を先頭に追加
-        // const giantConfig = `%%{init: {"themeVariables": {"fontSize": "36px"}}}%%\n`;
-
-        const giantConfig = `%%{init: {"themeVariables": {"fontSize": "36px"}, "gantt": {"rightPadding": 400}}}%%\n`;
-
-
-        const codeForKroki = giantConfig + mermaidCode;
-
-        // 1. 文字列をUTF-8のバイト配列に変換（★結合した codeForKroki を使う）
-        const bytes = new TextEncoder().encode(codeForKroki);
-
-        // 2. CompressionStreamを使ってzlib(deflate)圧縮
-        const cs = new CompressionStream('deflate');
-        const writer = cs.writable.getWriter();
-        writer.write(bytes);
-        writer.close();
-
-        // 3. 圧縮されたデータを取得
-        const compressedBuffer = await new Response(cs.readable).arrayBuffer();
-        
-        // 4. Base64エンコード（URL安全な形式に変換）
-        const base64 = btoa(String.fromCharCode(...new Uint8Array(compressedBuffer)))
-            .replace(/\+/g, '-')
-            .replace(/\//g, '_');
-
-        // 5. Krokiのエンドポイント
-        const apiUrl = `https://kroki.io/mermaid/png/${base64}`;
-        
-        // 動作確認用にログ出力
-        console.log("Kroki URL:", apiUrl);
-
-        // 別タブで開く、またはダウンロード処理
-        const link = document.createElement("a");
-        link.href = apiUrl;
-        link.download = `mermaid_kroki_${Date.now()}.png`;
-        link.target = "_blank"; // 安全策として別タブで開く
-        link.click();
-
-    } catch (error) {
-        console.error("Kroki連携エラー:", error);
-        alert("画像生成に失敗しました。ブラウザがCompressionStreamに対応していない可能性があります。");
-    }
-};
