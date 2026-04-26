@@ -508,9 +508,12 @@
         <div class="glass-card">
           <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
             <h3 style="margin:0">Mermaid出力結果</h3>
-            <button type="button" id="download-button" class="btn-ocean btn-amber">⬇ ダウンロード</button>
+            <div style="display:flex;gap:8px">
+              <button type="button" id="download-button" class="btn-ocean btn-amber">⬇ PNG</button>
+              <button type="button" id="download-svg-button" class="btn-ocean btn-ghost">⬇ SVG</button>
+            </div>
           </div>
-          <p class="notice-text">※ガントチャートはダウンロードで表示崩れが起きます。スクリーンショットをご利用ください。</p>
+          <p class="notice-text">※PNG変換がうまくいかない場合はSVGでダウンロードしてください。</p>
           <div id="preview" class="f fh s-full" style="background:rgba(255,255,255,0.96);border-radius:12px;min-height:200px;padding:24px;margin-top:12px"></div>
         </div>
       </div>
