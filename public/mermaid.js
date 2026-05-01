@@ -48,7 +48,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
 
     downloadButton.addEventListener('click', async () => {
-        downloadViaKroki(editor.value);
+        downloadMermaidImage();
     });
 
     formElement.addEventListener('submit', async(e) => {
@@ -241,70 +241,71 @@ let cleanMermaidCode = (aiResponse) => {
 let downloadMermaidImage = async () => {
     const preview = document.getElementById('preview');
     const svgElement = preview.querySelector('svg');
-
     if (!svgElement) return;
 
-    // 1. 実際の描画範囲（BBox）を取得
     const bBox = svgElement.getBBox();
     const viewBox = svgElement.viewBox.baseVal;
-    
-    // 2. 基本サイズを決定
     const baseWidth = viewBox.width || bBox.width;
     const baseHeight = viewBox.height || bBox.height;
     const minX = viewBox.x || bBox.x;
     const minY = viewBox.y || bBox.y;
+    const padding = 20;
 
-    // 【重要】上下左右に10pxずつの余白（パディング）を設定
-    const padding = 20; 
+    const clonedSvg = svgElement.cloneNode(true);
+    clonedSvg.setAttribute("width", baseWidth);
+    clonedSvg.setAttribute("height", baseHeight);
+    clonedSvg.style.fontFamily = "Arial, sans-serif";
 
+    clonedSvg.querySelectorAll('text').forEach(el => {
+        el.style.fontFamily = "Arial, sans-serif";
+    });
+
+    // <script> タグを除去（securityLevel:'loose' のSVGに含まれ、キャンバス汚染の原因になる）
+    clonedSvg.querySelectorAll('script').forEach(el => el.remove());
+
+    // on* イベント属性を除去
+    clonedSvg.querySelectorAll('*').forEach(el => {
+        [...el.attributes].forEach(attr => {
+            if (attr.name.startsWith('on')) el.removeAttribute(attr.name);
+        });
+    });
+
+    // <style> 内の外部URL参照を除去
+    clonedSvg.querySelectorAll('style').forEach(style => {
+        style.textContent = style.textContent.replace(
+            /url\(['"]?https?:\/\/[^'")]+['"]?\)/g, ''
+        );
+    });
+
+    const svgString = new XMLSerializer().serializeToString(clonedSvg);
+    // Blob URL ではなく data URL を使用（外部リソース参照によるキャンバス汚染を回避）
+    const svgBase64 = btoa(unescape(encodeURIComponent(svgString)));
+    const imgSrc = `data:image/svg+xml;base64,${svgBase64}`;
+
+    const scale = 2;
     const canvas = document.createElement("canvas");
-    const scale = 2; // 高解像度
-    
-    // キャンバスサイズをパディング分大きくする
     canvas.width = (baseWidth + padding * 2) * scale;
     canvas.height = (baseHeight + padding * 2) * scale;
     const ctx = canvas.getContext("2d");
 
-    // 3. SVGをクローンし、サイズを調整
-    const clonedSvg = svgElement.cloneNode(true);
-    clonedSvg.setAttribute("width", baseWidth);
-    clonedSvg.setAttribute("height", baseHeight);
-    clonedSvg.style.backgroundColor = "white";
-
-    // clonedSvg を作成した後にこれを追加
-    clonedSvg.style.fontFamily = "Arial, sans-serif";
-    const textElements = clonedSvg.querySelectorAll('text');
-    textElements.forEach(text => {
-        text.style.fontFamily = "Arial, sans-serif";
-    });
-
-    const svgData = new XMLSerializer().serializeToString(clonedSvg);
     const img = new Image();
-    const svgBlob = new Blob([svgData], { type: "image/svg+xml;charset=utf-8" });
-    const url = URL.createObjectURL(svgBlob);
-
     img.onload = () => {
-        // 背景を白で塗りつぶす
         ctx.fillStyle = "white";
         ctx.fillRect(0, 0, canvas.width, canvas.height);
-        
         ctx.scale(scale, scale);
-        
-        // 【修正ポイント】パディング分だけさらに内側に移動させる
-        // これで端の線が切れるのを防ぎます
         ctx.translate(-minX + padding, -minY + padding);
-        
         ctx.drawImage(img, 0, 0);
 
         const pngUrl = canvas.toDataURL("image/png");
         const link = document.createElement("a");
         link.href = pngUrl;
-        link.download = `mermaid_perfect_${Date.now()}.png`;
+        link.download = `mermaid_${Date.now()}.png`;
         link.click();
-
-        URL.revokeObjectURL(url);
     };
-    img.src = url;
+    img.onerror = () => {
+        alert("PNGの生成に失敗しました。");
+    };
+    img.src = imgSrc;
 };
 
 
